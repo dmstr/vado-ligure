@@ -27,6 +27,8 @@ MY_PUB_KEY=$(cat ssh/id_rsa-app-vm.pub)
 
 # get vado repo
 git clone git@git.hrzg.de:dmstr/vado-ligure.git
+# because master depends on boiler...
+cd vado-ligure; git checkout plain-shell; cd -
 
 # create VAGRANT file from template
 cp vado-ligure/Vagrantfile Vagrantfile
