@@ -7,8 +7,10 @@ file_to_disk = './var-lib-docker/large_disk.vdi'
 $script_always = <<SCRIPT
 set -e
 echo Running 'always' provisioning...
-if [ ! df -t ext4 /dev/sdb 1>/dev/null 2>&1 ]; then
-   sudo mkfs.ext4 /dev/sdb;
+if sudo file -Ls /dev/sdb | grep -q ext4; then
+  echo 'no mkfs.ext4 needed';
+else
+  sudo mkfs.ext4 /dev/sdb;
 fi
 sudo mkdir -p /var/lib/docker
 sudo mount -t ext4 /dev/sdb /var/lib/docker
