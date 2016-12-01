@@ -2,6 +2,7 @@
 # vi: set ft=ruby :
 
 $pubkey = "ssh-rsa <ADD_YOUR_PUBKEY_HERE>";
+$username = "<YOUR_USERNAME>"
 file_to_disk = './var-lib-docker/large_disk.vdi'
 
 Vagrant.configure(2) do |config|
@@ -14,7 +15,7 @@ Vagrant.configure(2) do |config|
   config.vm.network "private_network", ip: "192.168.33.10"
 
   # Mac OS X
-  config.vm.synced_folder "/Users/<ADD_YOUR_USERNAME>", "/Users/<ADD_YOUR_USERNAME>", type: "nfs"
+  config.vm.synced_folder "/Users/" + $username, "/Users/" + $username, type: "nfs"
 
   config.vm.provider "virtualbox" do |vb|
      vb.memory = "2048"
