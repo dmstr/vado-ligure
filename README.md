@@ -80,7 +80,7 @@ Go to `dev-1` and create the corresponding SSH key for the machine.
     docker-machine create \
         -d generic \
         --generic-ssh-user vagrant \
-        --generic-ssh-key ssh/id_rsa-vado \
+        --generic-ssh-key id_rsa-vado \
         --generic-ip-address {{ VADO_IP }} \
         vado
 
