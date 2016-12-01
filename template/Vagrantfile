@@ -6,6 +6,19 @@ home_dir = '/Users/' + username
 docker_hdd= home_dir + '/VirtualBox HDDs/{{ VADO_NAME }}/docker_hdd.vdi'
 pubkey = File.read("{{ VADO_SSH_PUBKEY_FILE }}")
 
+$script_always = <<SCRIPT
+set -e
+echo Running 'always' provisioning...
+if sudo file -Ls /dev/sdb | grep -q ext4; then
+  echo 'no mkfs.ext4 needed';
+else
+  sudo mkfs.ext4 /dev/sdb;
+fi
+sudo mkdir -p /var/lib/docker
+sudo mount -t ext4 /dev/sdb /var/lib/docker
+echo 'Done.'
+SCRIPT
+
 Vagrant.configure(2) do |config|
 
   # The most common configuration options are documented and commented below.
@@ -24,20 +37,19 @@ Vagrant.configure(2) do |config|
   end
 
   config.vm.provider "virtualbox" do |vb|
-     vb.memory = {{ VADO_RAM }}
      # Name in VBoxManage
      vb.name = "{{ VADO_NAME }}"
-     vb.customize ['createhd', '--filename', docker_hdd, '--size', 50 * 1024]
+     vb.memory = {{ VADO_RAM }}
+     unless File.exist?(file_to_disk)
+         vb.customize ['createhd', '--filename', docker_hdd, '--size', 50 * 1024]
+     end
      vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', docker_hdd]
-
   end
 
   # we need a newline after vagrant default key
   config.vm.provision "shell", inline: "echo '' >> .ssh/authorized_keys"
   config.vm.provision "shell", inline: "echo '" + pubkey + "' >> .ssh/authorized_keys"
 
-  config.vm.provision "shell", inline: "sudo mkfs.ext4 /dev/sdb"
-  config.vm.provision "shell", inline: "sudo mkdir -p /var/lib/docker"
-  config.vm.provision "shell", inline: "sudo mount -t ext4 /dev/sdb /var/lib/docker"
+  config.vm.provision "shell", run: "always", inline: $script_always
 
 end
