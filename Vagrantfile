@@ -1,9 +1,11 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-$pubkey = "ssh-rsa <ADD_YOUR_PUBKEY_HERE>";
-$username = "<YOUR_USERNAME>"
-file_to_disk = './var-lib-docker/large_disk.vdi'
+pubkey = ENV['PUBKEY'];
+
+username = ENV['USER']
+docker_hdd= './var-lib-docker/docker_hdd.vdi'
+home_dir = '/Users/' + username
 
 Vagrant.configure(2) do |config|
 
@@ -12,21 +14,31 @@ Vagrant.configure(2) do |config|
   # https://docs.vagrantup.com.
 
   config.vm.box = "debian/jessie64"
-  config.vm.network "private_network", ip: "192.168.33.10"
+  config.vm.network "private_network", ip: "192.168.87.70"
 
   # Mac OS X
-  config.vm.synced_folder "/Users/" + $username, "/Users/" + $username, type: "nfs"
+
+  config.vm.synced_folder home_dir, home_dir, type: "nfs"
+
+  # Name in Vagrant
+  config.vm.define "vado" do |vado|
+  end
 
   config.vm.provider "virtualbox" do |vb|
-     vb.memory = "2048"
-       vb.customize ['createhd', '--filename', file_to_disk, '--size', 50 * 1024]
-       vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', file_to_disk]
+     vb.memory = 2048
+     # Name in VBoxManage
+     vb.name = "vado"
+     vb.customize ['createhd', '--filename', docker_hdd, '--size', 50 * 1024]
+     vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', docker_hdd]
 
   end
 
-  config.vm.provision "shell", inline: "echo '" + $pubkey + "' >> .ssh/authorized_keys"
+  # we need a newline after vagrant default key
+  config.vm.provision "shell", inline: "echo '' >> .ssh/authorized_keys"
+  config.vm.provision "shell", inline: "echo '" + pubkey + "' >> .ssh/authorized_keys"
 
   config.vm.provision "shell", inline: "mkfs.ext4 /dev/sdb"
+  config.vm.provision "shell", inline: "mkdir -p /var/lib/docker"
   config.vm.provision "shell", inline: "mount -t ext4 /dev/sdb /var/lib/docker"
 
 end
