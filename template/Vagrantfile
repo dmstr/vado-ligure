@@ -37,8 +37,8 @@ Vagrant.configure(2) do |config|
   config.vm.provision "shell", inline: "echo '' >> .ssh/authorized_keys"
   config.vm.provision "shell", inline: "echo '" + pubkey + "' >> .ssh/authorized_keys"
 
-  config.vm.provision "shell", inline: "mkfs.ext4 /dev/sdb"
-  config.vm.provision "shell", inline: "mkdir -p /var/lib/docker"
-  config.vm.provision "shell", inline: "mount -t ext4 /dev/sdb /var/lib/docker"
+  config.vm.provision "shell", inline: "sudo mkfs.ext4 /dev/sdb"
+  config.vm.provision "shell", inline: "sudo mkdir -p /var/lib/docker"
+  config.vm.provision "shell", inline: "sudo mount -t ext4 /dev/sdb /var/lib/docker"
 
 end
