@@ -67,22 +67,12 @@ eval $(docker-machine env $VM_NAME)
 
     boilr template use vado dev-1
 
-Go to `dev-1` and create the corresponding SSH key for the machine.
+Go to `dev-1` and initialize the virtual machine
 
-    ssh-keygen -N '' -t rsa -b 4096 -C vado -f id_rsa-vado
+    cd dev-1
+    sh init.sh
 
-### Create VM
-
-    vagrant up
-    
-### Create Docker host
-    
-    docker-machine create \
-        -d generic \
-        --generic-ssh-user vagrant \
-        --generic-ssh-key id_rsa-vado \
-        --generic-ip-address {{ VADO_IP }} \
-        vado
+> Note! If you have NFS as the shared folder type, you may have to enter your password 
 
 Setup environment
 
@@ -90,4 +80,6 @@ Setup environment
 
 ### Development
 
-    boilr template save -f . vado
+After changing the template, save a dev version
+
+    boilr template save -f . vadodev
