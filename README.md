@@ -61,13 +61,15 @@ eval $(docker-machine env $VM_NAME)
 
 ## Usage (boilr)
 
-### Create SSH key
-
-    ssh-keygen -N '' -t rsa -b 4096 -C vado -f id_rsa-vado
+[Download](https://github.com/tmrts/boilr/releases) `boilr` and install to `/home/bin` or `/usr/local/bin`.
 
 ### Create template
 
     boilr template use vado dev-1
+
+Go to `dev-1` and create the corresponding SSH key for the machine.
+
+    ssh-keygen -N '' -t rsa -b 4096 -C vado -f id_rsa-vado
 
 ### Create VM
 
@@ -79,7 +81,7 @@ eval $(docker-machine env $VM_NAME)
         -d generic \
         --generic-ssh-user vagrant \
         --generic-ssh-key ssh/id_rsa-vado \
-        --generic-ip-address 192.168.87.70 \
+        --generic-ip-address {{ VADO_IP }} \
         vado
 
 Setup environment
