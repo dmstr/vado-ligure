@@ -1,36 +1,10 @@
 # Vado Ligure
 
+Vagrant Docker - Light Generic User Environment
+
 ## Usage
 
-### Create SSH key
-
-    ssh-keygen -N '' -t rsa -b 4096 -C vado -f id_rsa-vado
-
-### Create template
-
-    boilr template use vado dev-1
-
-## Development
-
-    boilr template save -f . vado
-pubkey
-
-    export PUBKEY="$(cat ssh/d_rsa-vado.pub)"
-
-create VM
-
-    vagrant up
-    
-create Docker host
-    
-    docker-machine create \
-        -d generic \
-        --generic-ssh-user vagrant \
-        --generic-ssh-key ssh/id_rsa-vado \
-        --generic-ip-address 192.168.87.70 \
-        vado
-
-## Create VM as docker-machine
+### Create VM as docker-machine
 
 ```
 # ------------------------------------
@@ -82,3 +56,36 @@ docker-machine create \
 # set ENV to new machine
 eval $(docker-machine env $VM_NAME)
 ```
+
+---
+
+## Usage (boilr)
+
+### Create SSH key
+
+    ssh-keygen -N '' -t rsa -b 4096 -C vado -f id_rsa-vado
+
+### Create template
+
+    boilr template use vado dev-1
+
+### Create VM
+
+    vagrant up
+    
+### Create Docker host
+    
+    docker-machine create \
+        -d generic \
+        --generic-ssh-user vagrant \
+        --generic-ssh-key ssh/id_rsa-vado \
+        --generic-ip-address 192.168.87.70 \
+        vado
+
+Setup environment
+
+    eval $(docker-machine env vado)
+
+### Development
+
+    boilr template save -f . vado
