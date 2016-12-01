@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-$pubkey = "ssh-rsa <ADD_YOUR_PUBKEY_HERE>";
+$pubkey = "<MY_PUB_KEY>";
 file_to_disk = './var-lib-docker/large_disk.vdi'
 
 Vagrant.configure(2) do |config|
@@ -11,18 +11,21 @@ Vagrant.configure(2) do |config|
   # https://docs.vagrantup.com.
 
   config.vm.box = "debian/jessie64"
-  config.vm.network "private_network", ip: "192.168.33.10"
+  config.vm.network "private_network", ip: "<VM_IP>"
 
   # Mac OS X
-  config.vm.synced_folder "/Users/<ADD_YOUR_USERNAME>", "/Users/<ADD_YOUR_USERNAME>", type: "nfs"
+  config.vm.synced_folder "<MY_HOME>", "<MY_HOME>", type: "nfs"
 
   config.vm.provider "virtualbox" do |vb|
-     vb.memory = "2048"
-       vb.customize ['createhd', '--filename', file_to_disk, '--size', 50 * 1024]
-       vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', file_to_disk]
+     vb.memory = "<VM_RAM>"
+     vb.name = "<VM_NAME>"
+     vb.customize ['createhd', '--filename', file_to_disk, '--size', 50 * 1024]
+     vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', file_to_disk]
 
   end
 
+  # we need a newline after vagrant default key
+  config.vm.provision "shell", inline: "echo '' >> .ssh/authorized_keys"
   config.vm.provision "shell", inline: "echo '" + $pubkey + "' >> .ssh/authorized_keys"
 
   config.vm.provision "shell", inline: "mkfs.ext4 /dev/sdb"
