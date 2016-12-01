@@ -1,5 +1,35 @@
 # Vado Ligure
 
+## Usage
+
+### Create SSH key
+
+    ssh-keygen -N '' -t rsa -b 4096 -C vado -f id_rsa-vado
+
+### Create template
+
+    boilr template use vado dev-1
+
+## Development
+
+    boilr template save -f . vado
+pubkey
+
+    export PUBKEY="$(cat ssh/d_rsa-vado.pub)"
+
+create VM
+
+    vagrant up
+    
+create Docker host
+    
+    docker-machine create \
+        -d generic \
+        --generic-ssh-user vagrant \
+        --generic-ssh-key ssh/id_rsa-vado \
+        --generic-ip-address 192.168.87.70 \
+        vado
+
 ## Create VM as docker-machine
 
 ```
