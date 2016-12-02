@@ -73,10 +73,14 @@ Go to `dev-1` and initialize the virtual machine
 
 Setup environment
 
-    eval $(docker-machine env vado)
+    eval $(docker-machine env dev-1)
 
-### Development
+## Development
 
 After changing the template, save a dev version
 
     boilr template save -f . vadodev
+
+Check all your Vagrant VMs
+
+    vagrant global-status
