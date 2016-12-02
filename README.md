@@ -26,21 +26,20 @@ mkdir -p $VM_NAME && cd $VM_NAME
 # create SSH key
 mkdir -p ssh
 chmod 700 ssh
-ssh-keygen -N '' -t rsa -b 4096 -C "docker-machine@$VM_NAME" -f ssh/id_rsa-$VM_NAME
-MY_PUB_KEY=$(cat ssh/id_rsa-app-vm.pub)
+MY_PUB_KEY_FILE=ssh/id_rsa-$VM_NAME
+ssh-keygen -N '' -t rsa -b 4096 -C "docker-machine@$VM_NAME" -f $MY_PUB_KEY_FILE
 
 # get vado repo
 git clone git@git.hrzg.de:dmstr/vado-ligure.git
 # because master depends on boiler...
-cd vado-ligure; git checkout plain-shell; cd -
+#cd vado-ligure; git checkout plain-shell; cd -
 
 # create VAGRANT file from template
-cp vado-ligure/Vagrantfile Vagrantfile
-sed -i .dist -e "s#<MY_PUB_KEY>#$MY_PUB_KEY#g" \
-             -e "s#<MY_HOME>#$HOME#g" \
-             -e "s#<VM_NAME>#$VM_NAME#g" \
-             -e "s#<VM_IP>#$VM_IP#g" \
-             -e "s#<VM_RAM>#$VM_RAM#g" Vagrantfile
+cp vado-ligure/template/Vagrantfile Vagrantfile
+sed -i .dist -e "s#{{ VADO_SSH_KEY_FILE }}#$MY_PUB_KEY_FILE#g" \
+             -e "s#{{ VADO_NAME }}#$VM_NAME#g" \
+             -e "s#{{ VADO_IP }}#$VM_IP#g" \
+             -e "s#{{ VADO_RAM }}#$VM_RAM#g" Vagrantfile
 
 # VM starten
 vagrant up
