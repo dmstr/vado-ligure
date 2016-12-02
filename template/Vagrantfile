@@ -33,7 +33,7 @@ Vagrant.configure(2) do |config|
   config.vm.synced_folder home_dir, home_dir, type: "nfs"
 
   # Name in Vagrant
-  config.vm.define "{{ VADO_NAME }}" do |{{ VADO_NAME }}|
+  config.vm.define "{{ VADO_NAME }}" do |vado_name|
   end
 
   config.vm.provider "virtualbox" do |vb|
