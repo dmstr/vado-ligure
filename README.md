@@ -31,8 +31,6 @@ ssh-keygen -N '' -t rsa -b 4096 -C "docker-machine@$VM_NAME" -f $MY_PUB_KEY_FILE
 
 # get vado repo
 git clone git@git.hrzg.de:dmstr/vado-ligure.git
-# because master depends on boiler...
-#cd vado-ligure; git checkout plain-shell; cd -
 
 # create VAGRANT file from template
 cp vado-ligure/template/Vagrantfile Vagrantfile
