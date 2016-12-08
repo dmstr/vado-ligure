@@ -60,6 +60,10 @@ eval $(docker-machine env $VM_NAME)
 
 [Download](https://github.com/tmrts/boilr/releases) `boilr` and install to `/home/bin` or `/usr/local/bin`.
 
+### Download template
+
+    boilr template download dmstr/vado-ligure vado
+
 ### Create template
 
     boilr template use vado dev-1
