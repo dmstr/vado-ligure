@@ -22,8 +22,11 @@ else
   sudo mount -t ext4 /dev/sdb /var/lib/docker
 fi
 
-echo 'Restarting docker daemon..'
-sudo service docker restart
+if service docker status > /dev/null 2>&1; then
+  echo 'Restarting docker daemon...'
+  sudo service docker restart
+fi
+
 
 echo 'Done.'
 SCRIPT
