@@ -11,23 +11,23 @@ pubkey = File.read("{{ VADO_SSH_KEY_FILE }}.pub")
 $script_always = <<SCRIPT
 set -e
 echo Running 'always' provisioning...
-if sudo file -Ls /dev/sdb | grep -q ext4; then
+if file -Ls /dev/sdb | grep -q ext4; then
   echo 'No mkfs.ext4 needed';
 else
-  sudo mkfs.ext4 /dev/sdb;
+  mkfs.ext4 /dev/sdb;
 fi
 
 if mount | grep -qs "/var/lib/docker"; then
   echo 'Mount exists'
 else
   echo 'Mounting /var/lib/docker to secondary disk'
-  sudo mkdir -p /var/lib/docker
-  sudo mount -t ext4 /dev/sdb /var/lib/docker
+  mkdir -p /var/lib/docker
+  mount -t ext4 /dev/sdb /var/lib/docker
 fi
 
 if service docker status > /dev/null 2>&1; then
   echo 'Restarting docker daemon...'
-  sudo service docker restart
+  service docker restart
 fi
 
 
@@ -42,15 +42,15 @@ $script_init = <<SCRIPT
 set -e
 echo Running 'always' provisioning...
 # install VBoxGuestAdditions for eg. timesync
-sudo echo 'deb http://ftp.de.debian.org/debian jessie main contrib non-free' > /etc/apt/sources.list.d/debian_contrib_nonfree.list
-sudo apt-get update
-sudo apt-get install -y virtualbox-guest-additions-iso
-sudo mount /usr/share/virtualbox/VBoxGuestAdditions.iso /mnt/
-sudo /mnt/VBoxLinuxAdditions.run --nox11
-sudo umount /mnt/
-sudo systemctl disable ntpd 2>/dev/null
-sudo systemctl enable vboxadd-service
-sudo service vboxadd-service restart
+echo 'deb http://ftp.de.debian.org/debian jessie main contrib non-free' > /etc/apt/sources.list.d/debian_contrib_nonfree.list
+apt-get update
+apt-get install -y virtualbox-guest-additions-iso
+mount /usr/share/virtualbox/VBoxGuestAdditions.iso /mnt/
+/mnt/VBoxLinuxAdditions.run --nox11
+umount /mnt/
+systemctl disable ntpd 2>/dev/null
+systemctl enable vboxadd-service
+service vboxadd-service restart
 
 echo 'Done: initial setup'
 SCRIPT
@@ -98,6 +98,7 @@ Vagrant.configure(2) do |config|
   config.vm.provision "shell", inline: "echo '' >> .ssh/authorized_keys"
   config.vm.provision "shell", inline: "echo '" + pubkey + "' >> .ssh/authorized_keys"
 
-  config.vm.provision "shell", run: "always", inline: $script_always
+  config.vm.provision "shell", privileged: true, run: "always", inline: $script_init
+  config.vm.provision "shell", privileged: true, run: "always", inline: $script_always
 
 end
