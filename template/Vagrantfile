@@ -98,7 +98,7 @@ Vagrant.configure(2) do |config|
   config.vm.provision "shell", inline: "echo '' >> .ssh/authorized_keys"
   config.vm.provision "shell", inline: "echo '" + pubkey + "' >> .ssh/authorized_keys"
 
-  config.vm.provision "shell", privileged: true, run: "always", inline: $script_init
+  config.vm.provision "shell", privileged: true, inline: $script_init
   config.vm.provision "shell", privileged: true, run: "always", inline: $script_always
 
 end
