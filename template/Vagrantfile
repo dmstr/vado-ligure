@@ -46,6 +46,9 @@ echo 'deb http://ftp.de.debian.org/debian jessie main contrib non-free' > /etc/a
 apt-get update
 apt-get install -y virtualbox-guest-additions-iso
 mount /usr/share/virtualbox/VBoxGuestAdditions.iso /mnt/
+# workaround for misleading return code != 0
+# see http://stackoverflow.com/a/25943638
+export REMOVE_INSTALLATION_DIR=0
 /mnt/VBoxLinuxAdditions.run --nox11
 umount /mnt/
 systemctl disable ntpd 2>/dev/null
