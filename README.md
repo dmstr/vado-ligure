@@ -87,6 +87,12 @@ Setup environment
 
     eval $(docker-machine env dev-1)
 
+### Create bash alias
+
+For fast access, you can create an alias in your profile, like
+
+    alias vadovm='VAGRANT_CWD=<PATH-TO>/dev-1 vagrant'
+
 ## Development
 
 After changing the template, save a dev version
