@@ -5,6 +5,9 @@ home_dir = ENV['HOME']
 docker_hdd= home_dir + '/VirtualBox HDDs/{{ VADO_NAME }}/docker_hdd.vdi'
 pubkey = File.read("{{ VADO_SSH_KEY_FILE }}.pub")
 
+# ---------------------------------------------
+# script to run on every (re)start
+# ---------------------------------------------
 $script_always = <<SCRIPT
 set -e
 echo Running 'always' provisioning...
@@ -28,9 +31,30 @@ if service docker status > /dev/null 2>&1; then
 fi
 
 
-echo 'Done.'
+echo 'Done: always setup'
 SCRIPT
+# ---------------------------------------------
 
+# ---------------------------------------------
+# script to run once on initial setup
+# ---------------------------------------------
+$script_init = <<SCRIPT
+set -e
+echo Running 'always' provisioning...
+# install VBoxGuestAdditions for eg. timesync
+sudo echo 'deb http://ftp.de.debian.org/debian jessie main contrib non-free' > /etc/apt/sources.list.d/debian_contrib_nonfree.list
+sudo apt-get update
+sudo apt-get install -y virtualbox-guest-additions-iso
+sudo mount /usr/share/virtualbox/VBoxGuestAdditions.iso /mnt/
+sudo /mnt/VBoxLinuxAdditions.run --nox11
+sudo umount /mnt/
+sudo systemctl disable ntpd 2>/dev/null
+sudo systemctl enable vboxadd-service
+sudo service vboxadd-service restart
+
+echo 'Done: initial setup'
+SCRIPT
+# ---------------------------------------------
 Vagrant.configure(2) do |config|
 
   # The most common configuration options are documented and commented below.
@@ -41,8 +65,7 @@ Vagrant.configure(2) do |config|
   config.vm.network "private_network", ip: "{{ VADO_IP }}"
 
   # Mac OS X
-
-  config.vm.synced_folder home_dir, home_dir, type: "nfs", mount_options: ['actimeo=2']
+  config.vm.synced_folder home_dir, home_dir, type: "nfs", mount_options: ['actimeo=2', 'tcp']
 
   # Name in Vagrant
   config.vm.define "{{ VADO_NAME }}" do |vado_name|
@@ -57,6 +80,18 @@ Vagrant.configure(2) do |config|
          vb.customize ['createhd', '--filename', docker_hdd, '--size', {{ VADO_DISK_SIZE_GB }} * 1024]
      end
      vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', docker_hdd]
+
+     # set timesync parameters to keep VM clocks in sync
+     # sync time every 10 seconds
+     virtualbox.customize [ "guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-interval", 10000 ]
+     # adjustments if drift > 100 ms
+     virtualbox.customize [ "guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-min-adjust", 100 ]
+     # sync time on restore and start
+     virtualbox.customize [ "guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-on-restore", 1 ]
+     virtualbox.customize [ "guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-start", 1 ]
+     # at 1 second drift, the time will be set and not "smoothly" adjusted
+     virtualbox.customize [ "guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold", 1000 ]
+
   end
 
   # we need a newline after vagrant default key
