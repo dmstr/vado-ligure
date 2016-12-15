@@ -3,7 +3,7 @@
 
 home_dir = ENV['HOME']
 docker_hdd= home_dir + '/VirtualBox HDDs/{{ VADO_NAME }}/docker_hdd.vdi'
-pubkey = File.read("{{ VADO_SSH_KEY_FILE }}.pub")
+pubkey = File.read(File.dirname(__FILE__)+"/{{ VADO_SSH_KEY_FILE }}.pub")
 
 # ---------------------------------------------
 # script to run on every (re)start
