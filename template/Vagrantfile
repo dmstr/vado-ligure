@@ -51,6 +51,8 @@ mount /usr/share/virtualbox/VBoxGuestAdditions.iso /mnt/
 export REMOVE_INSTALLATION_DIR=0
 /mnt/VBoxLinuxAdditions.run --nox11
 umount /mnt/
+# set hold flag for package to disable auto (dist)upgrades
+apt-mark hold virtualbox-guest-additions-iso
 systemctl disable ntpd 2>/dev/null
 systemctl enable vboxadd-service
 service vboxadd-service restart
