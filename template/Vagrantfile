@@ -40,7 +40,7 @@ SCRIPT
 # ---------------------------------------------
 $script_init = <<SCRIPT
 set -e
-echo Running 'always' provisioning...
+echo Running 'initial' provisioning...
 # install VBoxGuestAdditions for eg. timesync
 echo 'deb http://ftp.de.debian.org/debian jessie main contrib non-free' > /etc/apt/sources.list.d/debian_contrib_nonfree.list
 apt-get update
