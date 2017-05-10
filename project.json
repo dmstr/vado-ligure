@@ -1,9 +1,9 @@
 {
     "VADO_NAME": "vado",
     "VADO_BOX": "debian/stretch64",
-    "VADO_IP": "192.168.78.60",
-    "VADO_CPUS": "2",
-    "VADO_RAM": "2048",
-    "VADO_DISK_SIZE_GB": "50",
+    "VADO_IP": "10.168.78.60",
+    "VADO_CPUS": "4",
+    "VADO_RAM": "4096",
+    "VADO_DISK_SIZE_GB": "70",
     "VADO_SSH_KEY_FILE": "id_rsa-vado"    
 }
