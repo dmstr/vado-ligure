@@ -9,4 +9,5 @@ docker-machine create \
     --generic-ssh-user vagrant \
     --generic-ssh-key {{ VADO_SSH_KEY_FILE }} \
     --generic-ip-address {{ VADO_IP }} \
+    --engine-storage-driver={{ VADO_STORAGE_DRIVER }} \
     {{ VADO_NAME }}
