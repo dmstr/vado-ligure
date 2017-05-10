@@ -14,6 +14,10 @@ A Vagrantfile for creating a development Docker host with CLI-based templating s
 
     boilr template download dmstr/vado-ligure vado
 
+If you need to update an existing template, use
+
+    boilr template download -f dmstr/vado-ligure vado
+
 ### Create template
 
     boilr template use vado dev-1
