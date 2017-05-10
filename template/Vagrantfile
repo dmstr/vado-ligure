@@ -5,60 +5,10 @@ home_dir = ENV['HOME']
 docker_hdd= home_dir + '/VirtualBox HDDs/{{ VADO_NAME }}/docker_hdd.vdi'
 pubkey = File.read(File.dirname(__FILE__)+"/{{ VADO_SSH_KEY_FILE }}.pub")
 
-# ---------------------------------------------
-# script to run on every (re)start
-# ---------------------------------------------
-$script_always = <<SCRIPT
-set -e
-echo Running 'always' provisioning...
-if file -Ls /dev/sdb | grep -q ext4; then
-  echo 'No mkfs.ext4 needed';
-else
-  mkfs.ext4 /dev/sdb;
-fi
-
-if mount | grep -qs "/var/lib/docker"; then
-  echo 'Mount exists'
-else
-  echo 'Mounting /var/lib/docker to secondary disk'
-  mkdir -p /var/lib/docker
-  mount -t ext4 /dev/sdb /var/lib/docker
-fi
-
-if service docker status > /dev/null 2>&1; then
-  echo 'Restarting docker daemon...'
-  service docker restart
-fi
-
-
-echo 'Done: always setup'
-SCRIPT
-# ---------------------------------------------
 
 # ---------------------------------------------
-# script to run once on initial setup
-# ---------------------------------------------
-$script_init = <<SCRIPT
-set -e
-echo Running 'initial' provisioning...
-# install VBoxGuestAdditions for eg. timesync
-echo 'deb http://ftp.de.debian.org/debian jessie main contrib non-free' > /etc/apt/sources.list.d/debian_contrib_nonfree.list
-apt-get update
-apt-get install -y virtualbox-guest-additions-iso
-mount /usr/share/virtualbox/VBoxGuestAdditions.iso /mnt/
-# workaround for misleading return code != 0
-# see http://stackoverflow.com/a/25943638
-export REMOVE_INSTALLATION_DIR=0
-/mnt/VBoxLinuxAdditions.run --nox11
-umount /mnt/
-# set hold flag for package to disable auto (dist)upgrades
-apt-mark hold virtualbox-guest-additions-iso
-systemctl disable ntpd 2>/dev/null
-systemctl enable vboxadd-service
-service vboxadd-service restart
 
-echo 'Done: initial setup'
-SCRIPT
+
 # ---------------------------------------------
 Vagrant.configure(2) do |config|
 
@@ -103,7 +53,8 @@ Vagrant.configure(2) do |config|
   config.vm.provision "shell", inline: "echo '' >> .ssh/authorized_keys"
   config.vm.provision "shell", inline: "echo '" + pubkey + "' >> .ssh/authorized_keys"
 
-  ### TODO: Virtualbox Guest Additions not available on stretch --- config.vm.provision "shell", privileged: true, inline: $script_init
-  config.vm.provision "shell", privileged: true, run: "always", inline: $script_always
+  config.vm.provision "shell", privileged: true, path: 'provision-stretch-system-tools.sh'
+
+  config.vm.provision "shell", privileged: true, run: "always", path: 'provision-nfs.sh'
 
 end
