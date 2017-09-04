@@ -5,7 +5,7 @@
 # ---------------------------------------------
 set -e
 
-echo Running 'initial' provisioning...
+echo Running 'initial VBoxGuestAdditions' provisioning...
 # install VBoxGuestAdditions for eg. timesync
 echo 'deb http://ftp.de.debian.org/debian jessie main contrib non-free' > /etc/apt/sources.list.d/debian_contrib_nonfree.list
 apt-get update
@@ -22,4 +22,4 @@ systemctl disable ntpd 2>/dev/null
 systemctl enable vboxadd-service
 service vboxadd-service restart
 
-echo 'Done: initial setup'
+echo 'Done: initial VBoxGuestAdditions setup'
