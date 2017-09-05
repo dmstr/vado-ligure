@@ -56,6 +56,9 @@ Vagrant.configure(2) do |config|
   config.vm.provision "shell", privileged: true, path: 'provision-stretch-system-tools.sh'
   config.vm.provision "shell", privileged: true, path: 'provision-stretch-vbox-guest-additions.sh'
 
+  {{if eq VADO_STORAGE_DRIVER "zfs"}}
+  config.vm.provision "shell", privileged: true, path: 'vm-provision-stretch-zfs-init.sh'
+  {{else}}
   config.vm.provision "shell", privileged: true, run: "always", path: 'provision-volume.sh'
-
+  {{end}}
 end
