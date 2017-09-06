@@ -10,5 +10,5 @@ docker-machine create \
     --generic-ssh-key {{ VADO_SSH_KEY_FILE }} \
     --generic-ip-address {{ VADO_IP }} \
     --engine-storage-driver={{ VADO_STORAGE_DRIVER }} \
-{{if VADO_REGISTRY_MIRROR}}    --registry-mirror={{ VADO_REGISTRY_MIRROR }} {{end}}\
+{{if VADO_REGISTRY_MIRROR}}    --engine-registry-mirror={{ VADO_REGISTRY_MIRROR }} {{end}}\
     {{ VADO_NAME }}
