@@ -9,5 +9,6 @@
     "VADO_STORAGE_DRIVER": [
         "overlay2",
         "zfs"
-    ]
+    ],
+    "VADO_REGISTRY_MIRROR": ""
 }
