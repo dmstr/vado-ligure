@@ -25,24 +25,24 @@ If you need to update an existing template, use
 
 ### Create template
 
-    boilr template use vado dev-1
+    boilr template use vado dev1
 
-Go to `dev-1` and initialize the virtual machine
+Go to `dev1` and initialize the virtual machine
 
-    cd dev-1
+    cd dev1
     sh init.sh
 
 > Note! If you have NFS as the shared folder type, you may have to enter your password 
 
 Setup environment
 
-    eval $(docker-machine env dev-1)
+    eval $(docker-machine env dev1)
 
 ### Create bash alias
 
 For fast access, you can create an alias in your profile, like
 
-    alias vadovm='VAGRANT_CWD=<PATH-TO>/dev-1 vagrant'
+    alias vadovm='VAGRANT_CWD=<PATH-TO>/dev1 vagrant'
 
 ## Development
 
